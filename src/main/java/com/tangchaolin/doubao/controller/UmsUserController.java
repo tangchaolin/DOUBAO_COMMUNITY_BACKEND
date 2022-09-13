@@ -1,6 +1,7 @@
 package com.tangchaolin.doubao.controller;
 
 import com.tangchaolin.doubao.common.api.ApiResult;
+import com.tangchaolin.doubao.model.dto.LoginDTO;
 import com.tangchaolin.doubao.model.dto.RegisterDTO;
 import com.tangchaolin.doubao.model.entity.UmsUser;
 import com.tangchaolin.doubao.service.IUmsUserService;
@@ -30,7 +31,20 @@ public class UmsUserController extends BaseController {
         map.put("user", user);
         return ApiResult.success(map);
     }
+    @PostMapping("/login")
+    public ApiResult<Map<String,String>> login(@RequestBody @Valid LoginDTO dto){
 
+        String token = iUmsUserService.executeLogin(dto);
+
+        if (ObjectUtils.isEmpty(token)){
+            return ApiResult.failed("密码错误");
+        }
+        Map<String, String> map = new HashMap<>(16);
+        map.put("token", token);
+        return ApiResult.success(map,"登陆成功");
+
+
+    }
 
 }
 
