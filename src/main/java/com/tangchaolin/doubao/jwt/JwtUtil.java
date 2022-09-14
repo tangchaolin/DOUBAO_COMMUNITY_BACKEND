@@ -28,4 +28,60 @@ public class JwtUtil {
                 .compact();
         return jwt;
     }
+
+
+
+
+    public static HttpServletRequest validateTokenAndAddUserIdToHeader(HttpServletRequest request) {
+        String token = request.getHeader(HEADER_STRING);
+        if (token != null) {
+            // parse the token.
+            try {
+                Map<String, Object> body = Jwts.parser()
+                        .setSigningKey(SECRET)
+                        .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
+                        .getBody();
+                return new CustomHttpServletRequest(request, body);
+            } catch (Exception e) {
+                logger.info(e.getMessage());
+                throw new TokenValidationException(e.getMessage());
+            }
+        } else {
+            throw new TokenValidationException("Missing token");
+        }
+    }
+
+    public static class CustomHttpServletRequest extends HttpServletRequestWrapper {
+        private Map<String, String> claims;
+
+        public CustomHttpServletRequest(HttpServletRequest request, Map<String, ?> claims) {
+            super(request);
+            this.claims = new HashMap<>();
+            claims.forEach((k, v) -> this.claims.put(k, String.valueOf(v)));
+        }
+
+        @Override
+        public Enumeration<String> getHeaders(String name) {
+            if (claims != null && claims.containsKey(name)) {
+                return Collections.enumeration(Arrays.asList(claims.get(name)));
+            }
+            return super.getHeaders(name);
+        }
+
+        @Override
+        public String getHeader(String key) {
+            String value = super.getHeader(key);
+            if (value == null) {
+                value = claims.get(key);
+            }
+            return value;
+        }
+
+    }
+    static class TokenValidationException extends RuntimeException {
+        public TokenValidationException(String msg) {
+            super(msg);
+        }
+
+    }
 }

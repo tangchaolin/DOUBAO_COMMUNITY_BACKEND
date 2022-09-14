@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-
+import static com.tangchaolin.doubao.jwt.JwtUtil.USER_NAME;
 
 
 @RestController
@@ -45,6 +45,16 @@ public class UmsUserController extends BaseController {
 
 
     }
+    @GetMapping("/info")
+    public ApiResult<UmsUser> getUser(@RequestHeader("userName") String userName){
+        System.out.println(userName);
+//        String userName = "zhangwei";
+        UmsUser user = iUmsUserService.getUserByUsername(userName);
+        return ApiResult.success(user);
+    }
+
+
+
 
 }
 
