@@ -1,6 +1,7 @@
 package com.tangchaolin.doubao.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tangchaolin.doubao.model.entity.BmsTag;
 import com.tangchaolin.doubao.model.entity.BmsTopicTag;
 
 import java.util.List;
@@ -14,5 +15,14 @@ public interface IBmsTopicTagService extends IService<BmsTopicTag> {
      * @return
      */
     List<BmsTopicTag> selectByTopicId(String topicId);
+
+    /**
+     * 创建中间关系
+     *
+     * @param id
+     * @param tags
+     * @return
+     */
+    void createTopicTag(String id, List<BmsTag> tags);
 
 }

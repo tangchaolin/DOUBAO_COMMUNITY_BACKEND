@@ -2,6 +2,7 @@ package com.tangchaolin.doubao.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tangchaolin.doubao.model.dto.CreateTopicDTO;
 import com.tangchaolin.doubao.model.entity.BmsPost;
 import com.tangchaolin.doubao.model.entity.UmsUser;
 import com.tangchaolin.doubao.model.vo.PostVO;
@@ -22,4 +23,13 @@ public interface IBmsPostService extends IService<BmsPost> {
      * @return
      */
     Page<PostVO> getList(Page<PostVO> page, String tab);
+
+    /**
+     * 发布
+     *
+     * @param dto
+     * @param principal
+     * @return
+     */
+    BmsPost create(CreateTopicDTO dto, UmsUser principal);
 }
