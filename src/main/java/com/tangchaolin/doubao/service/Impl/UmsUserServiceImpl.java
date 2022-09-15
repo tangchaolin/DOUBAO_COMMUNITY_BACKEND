@@ -4,13 +4,16 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tangchaolin.doubao.common.exception.ApiAsserts;
 import com.tangchaolin.doubao.jwt.JwtUtil;
+import com.tangchaolin.doubao.mapper.BmsTopicMapper;
 import com.tangchaolin.doubao.mapper.UmsUserMapper;
 import com.tangchaolin.doubao.model.dto.LoginDTO;
 import com.tangchaolin.doubao.model.dto.RegisterDTO;
 import com.tangchaolin.doubao.model.entity.UmsUser;
+import com.tangchaolin.doubao.model.vo.ProfileVO;
 import com.tangchaolin.doubao.service.IUmsUserService;
 import com.tangchaolin.doubao.utils.MD5Utils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,8 @@ import java.util.Date;
 public class UmsUserServiceImpl extends ServiceImpl<UmsUserMapper, UmsUser> implements IUmsUserService {
     @Autowired
     private UmsUserMapper umsUserMapper;
+    @Autowired
+    private BmsTopicMapper bmsTopicMapper;
     @Override
     public UmsUser executeRegister(RegisterDTO dto) {
         //查询是否有相同用户名的用户
@@ -68,6 +73,15 @@ public class UmsUserServiceImpl extends ServiceImpl<UmsUserMapper, UmsUser> impl
             log.warn("用户不存在or密码验证失败=======>{}", dto.getUsername());
         }
         return token;
+    }
+
+    @Override
+    public ProfileVO getUserProfile(String id) {
+        ProfileVO profile = new ProfileVO();
+        UmsUser user = umsUserMapper.selectById(id);
+        BeanUtils.copyProperties(user, profile);
+
+        return profile;
     }
 
 

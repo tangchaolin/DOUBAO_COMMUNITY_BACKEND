@@ -32,4 +32,12 @@ public interface IBmsPostService extends IService<BmsPost> {
      * @return
      */
     BmsPost create(CreateTopicDTO dto, UmsUser principal);
+
+    /**
+     * 查看话题详情
+     *
+     * @param id
+     * @return
+     */
+    Map<String, Object> viewTopic(String id);
 }

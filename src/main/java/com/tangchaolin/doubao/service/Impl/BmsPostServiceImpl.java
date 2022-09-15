@@ -1,6 +1,7 @@
 package com.tangchaolin.doubao.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,9 +14,11 @@ import com.tangchaolin.doubao.model.entity.BmsTag;
 import com.tangchaolin.doubao.model.entity.BmsTopicTag;
 import com.tangchaolin.doubao.model.entity.UmsUser;
 import com.tangchaolin.doubao.model.vo.PostVO;
+import com.tangchaolin.doubao.model.vo.ProfileVO;
 import com.tangchaolin.doubao.service.IBmsPostService;
 import com.tangchaolin.doubao.service.IBmsTopicTagService;
 
+import com.tangchaolin.doubao.service.IUmsUserService;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,8 @@ public class BmsPostServiceImpl extends ServiceImpl<BmsTopicMapper, BmsPost> imp
     private com.tangchaolin.doubao.service.IBmsTagService iBmsTagService;
     @Autowired
     private IBmsTopicTagService iBmsTopicTagService;
+    @Autowired
+    private IUmsUserService  iUmsUserService;
     @Override
     public Page<PostVO> getList(Page<PostVO> page, String tab) {
         // 查询话题
@@ -82,5 +87,35 @@ public class BmsPostServiceImpl extends ServiceImpl<BmsTopicMapper, BmsPost> imp
         }
 
         return topic;
+    }
+
+
+    @Override
+    public Map<String, Object> viewTopic(String id) {
+        Map<String, Object> map = new HashMap<>(16);
+        BmsPost topic = this.baseMapper.selectById(id);
+        Assert.notNull(topic, "当前话题不存在,或已被作者删除");
+        // 查询话题详情
+        topic.setView(topic.getView() + 1);
+        this.baseMapper.updateById(topic);
+        // emoji转码
+        topic.setContent(EmojiParser.parseToUnicode(topic.getContent()));
+        map.put("topic", topic);
+        // 标签
+        QueryWrapper<BmsTopicTag> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(BmsTopicTag::getTopicId, topic.getId());
+        Set<String> set = new HashSet<>();
+        for (BmsTopicTag articleTag : iBmsTopicTagService.list(wrapper)) {
+            set.add(articleTag.getTagId());
+        }
+        List<BmsTag> tags = iBmsTagService.listByIds(set);
+        map.put("tags", tags);
+
+        // 作者
+
+        ProfileVO user = iUmsUserService.getUserProfile(topic.getUserId());
+        map.put("user", user);
+
+        return map;
     }
 }
