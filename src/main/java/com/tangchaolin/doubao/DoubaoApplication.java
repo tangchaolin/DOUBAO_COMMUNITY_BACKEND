@@ -14,7 +14,6 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 //@ComponentScan( {"com.tangchaolin.doubao.utils"})
 
-@MapperScan("com.tangchaolin.doubao.mapper")
 public class DoubaoApplication extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
