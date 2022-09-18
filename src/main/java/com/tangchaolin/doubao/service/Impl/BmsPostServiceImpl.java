@@ -19,6 +19,7 @@ import com.tangchaolin.doubao.service.IBmsPostService;
 import com.tangchaolin.doubao.service.IBmsTopicTagService;
 
 import com.tangchaolin.doubao.service.IUmsUserService;
+import com.tangchaolin.doubao.utils.SimilarityHelper;
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,13 +37,14 @@ public class BmsPostServiceImpl extends ServiceImpl<BmsTopicMapper, BmsPost> imp
     private BmsTagMapper bmsTagMapper;
     @Resource
     private UmsUserMapper umsUserMapper;
-
     @Autowired
     private com.tangchaolin.doubao.service.IBmsTagService iBmsTagService;
     @Autowired
     private IBmsTopicTagService iBmsTopicTagService;
     @Autowired
     private IUmsUserService  iUmsUserService;
+    @Autowired
+    private SimilarityHelper similarityHelper;
     @Override
     public Page<PostVO> getList(Page<PostVO> page, String tab) {
         // 查询话题
@@ -117,5 +119,15 @@ public class BmsPostServiceImpl extends ServiceImpl<BmsTopicMapper, BmsPost> imp
         map.put("user", user);
 
         return map;
+    }
+
+    @Override
+    public List<BmsPost> getRecommend(String id) {
+        List<BmsPost> list=baseMapper.selectRecommend(id);
+        BmsPost post = baseMapper.selectById(id);
+        List<BmsPost> newList= similarityHelper.getRecommendList(list, post);
+
+
+        return newList;
     }
 }

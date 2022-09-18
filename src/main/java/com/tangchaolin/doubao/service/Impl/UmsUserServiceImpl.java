@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tangchaolin.doubao.common.exception.ApiAsserts;
 import com.tangchaolin.doubao.jwt.JwtUtil;
+import com.tangchaolin.doubao.mapper.BmsFollowMapper;
 import com.tangchaolin.doubao.mapper.BmsTopicMapper;
 import com.tangchaolin.doubao.mapper.UmsUserMapper;
 import com.tangchaolin.doubao.model.dto.LoginDTO;
 import com.tangchaolin.doubao.model.dto.RegisterDTO;
+import com.tangchaolin.doubao.model.entity.BmsFollow;
+import com.tangchaolin.doubao.model.entity.BmsPost;
 import com.tangchaolin.doubao.model.entity.UmsUser;
 import com.tangchaolin.doubao.model.vo.ProfileVO;
 import com.tangchaolin.doubao.service.IUmsUserService;
@@ -29,6 +32,8 @@ public class UmsUserServiceImpl extends ServiceImpl<UmsUserMapper, UmsUser> impl
     private UmsUserMapper umsUserMapper;
     @Autowired
     private BmsTopicMapper bmsTopicMapper;
+    @Autowired
+    private BmsFollowMapper bmsFollowMapper;
     @Override
     public UmsUser executeRegister(RegisterDTO dto) {
         //查询是否有相同用户名的用户
@@ -80,6 +85,10 @@ public class UmsUserServiceImpl extends ServiceImpl<UmsUserMapper, UmsUser> impl
         ProfileVO profile = new ProfileVO();
         UmsUser user = umsUserMapper.selectById(id);
         BeanUtils.copyProperties(user, profile);
+        Integer followerCount=bmsFollowMapper.selectCount(new LambdaQueryWrapper<BmsFollow>().eq(BmsFollow::getParentId, user.getId()));
+        profile.setFollowerCount(followerCount);
+        Integer topicCount= bmsTopicMapper.selectCount(new LambdaQueryWrapper<BmsPost>().eq(BmsPost::getUserId, user.getId()));
+        profile.setTopicCount(topicCount);
 
         return profile;
     }

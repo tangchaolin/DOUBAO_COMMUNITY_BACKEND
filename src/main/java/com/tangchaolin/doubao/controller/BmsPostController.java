@@ -8,9 +8,11 @@ import com.tangchaolin.doubao.model.entity.UmsUser;
 import com.tangchaolin.doubao.model.vo.PostVO;
 import com.tangchaolin.doubao.service.IBmsPostService;
 import com.tangchaolin.doubao.service.IUmsUserService;
+import com.tangchaolin.doubao.service.Impl.BmsPostServiceImpl;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.tangchaolin.doubao.jwt.JwtUtil.USER_NAME;
@@ -44,6 +46,14 @@ public class BmsPostController extends BaseController {
     public ApiResult<Map<String, Object>> view(@RequestParam("id") String id) {
         Map<String, Object> map = iBmsPostService.viewTopic(id);
         return ApiResult.success(map);
+    }
+
+    @GetMapping("/recommend")
+    public ApiResult<List<BmsPost>> getRecommend(@RequestParam("topicId") String id){
+        List<BmsPost> topics = iBmsPostService.getRecommend(id);
+        System.out.println(topics.size());
+
+        return ApiResult.success(topics);
     }
 
 }

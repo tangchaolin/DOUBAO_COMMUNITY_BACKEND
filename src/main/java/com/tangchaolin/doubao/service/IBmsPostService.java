@@ -40,4 +40,6 @@ public interface IBmsPostService extends IService<BmsPost> {
      * @return
      */
     Map<String, Object> viewTopic(String id);
+
+    List<BmsPost> getRecommend(String id);
 }

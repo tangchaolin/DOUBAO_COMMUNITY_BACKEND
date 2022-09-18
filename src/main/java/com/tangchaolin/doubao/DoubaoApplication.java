@@ -9,7 +9,11 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+
 @SpringBootApplication
+//@ComponentScan( {"com.tangchaolin.doubao.utils"})
+
 @MapperScan("com.tangchaolin.doubao.mapper")
 public class DoubaoApplication extends SpringBootServletInitializer {
     @Override

@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 8000
 web:
   domain: http://localhost
 
@@ -7,8 +7,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 123456
-    url: jdbc:mysql://localhost:3306/doubao?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=GMT%2B8
+    password: 104304Su
+    url: jdbc:mysql://mysql:3306/doubao?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=GMT%2B8
     type: com.zaxxer.hikari.HikariDataSource
 
 logging:
