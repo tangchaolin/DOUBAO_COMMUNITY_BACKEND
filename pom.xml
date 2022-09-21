@@ -23,6 +23,7 @@
         <hutool.version>5.5.7</hutool.version>
         <jwt.version>0.9.1</jwt.version>
         <emoji-java.version>5.1.1</emoji-java.version>
+        <docker.image.prefix>doubao</docker.image.prefix>
     </properties>
 
     <dependencies>
@@ -139,28 +140,19 @@
                     </excludes>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <id>build-image</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
-                    </execution>
 
-
-                </executions>
                 <configuration>
+                    <!--远程Docker的地址-->
                     <dockerHost>http://43.143.144.78:2375</dockerHost>
-                    <imageName>mall-tiny/${project.artifactId}:${project.version}</imageName>
-                    <baseImage>java:8</baseImage>
-                    <entryPoint>["java", "-jar", "${project.build.finalName}.jar"]        </entryPoint>
-                    <!-- 这里是复制 jar 包到 docker 容器指定目录配置 -->
+                    <!--镜像名称，前缀/项目名-->
+                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <!-- 我们自己配置编写的docker目录，也就是dockerfile：指定位置在src/main/docker中    -->
+                    <dockerDirectory>src/main/docker</dockerDirectory>
+                    <!-- 我们要打包镜像需要带上的资源：默认会去找我们项目目录下对应打包好的jar包   -->
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
@@ -170,6 +162,25 @@
                     </resources>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                    <!--指定主类-->
+                    <mainClass>com.tangchaolin.doubao.DoubaoApplication</mainClass>
+                </configuration>
+            </plugin>
+
+
         </plugins>
     </build>
 
