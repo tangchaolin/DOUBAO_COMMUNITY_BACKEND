@@ -5,6 +5,7 @@ import com.tangchaolin.doubao.model.entity.BmsTag;
 import com.tangchaolin.doubao.model.entity.BmsTopicTag;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IBmsTopicTagService extends IService<BmsTopicTag> {
 
@@ -24,5 +25,13 @@ public interface IBmsTopicTagService extends IService<BmsTopicTag> {
      * @return
      */
     void createTopicTag(String id, List<BmsTag> tags);
+
+    /**
+     * 根据标签id获取话题ID集合
+     * @param id
+     * @return
+     */
+
+    Set<String> selectTopicIdsByTagId(String id);
 
 }

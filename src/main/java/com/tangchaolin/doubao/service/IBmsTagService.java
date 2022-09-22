@@ -18,4 +18,7 @@ public interface IBmsTagService extends IService<BmsTag> {
      */
     List<BmsTag> insertTags(List<String> tags);
 
+
+    Page<BmsPost> selectTopicsByTagId(Page<BmsPost> topicPage,String id);
+
 }

@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+
 @Service
 public class BmsTopicTagServiceImpl extends ServiceImpl<BmsTopicTagMapper, BmsTopicTag> implements IBmsTopicTagService {
     @Override
@@ -32,6 +34,11 @@ public class BmsTopicTagServiceImpl extends ServiceImpl<BmsTopicTagMapper, BmsTo
             topicTag.setTagId(tag.getId());
             this.baseMapper.insert(topicTag);
         });
+    }
+
+    @Override
+    public Set<String> selectTopicIdsByTagId(String id) {
+        return this.baseMapper.getTopicIdsByTagId(id);
     }
 
 

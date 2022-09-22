@@ -1,8 +1,10 @@
 package com.tangchaolin.doubao.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tangchaolin.doubao.mapper.BmsTagMapper;
+import com.tangchaolin.doubao.model.entity.BmsPost;
 import com.tangchaolin.doubao.model.entity.BmsTag;
 import com.tangchaolin.doubao.service.IBmsPostService;
 import com.tangchaolin.doubao.service.IBmsTagService;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 @Service
 public class BmsTagServiceImpl extends ServiceImpl<BmsTagMapper, BmsTag> implements IBmsTagService {
 
@@ -35,5 +39,14 @@ public class BmsTagServiceImpl extends ServiceImpl<BmsTagMapper, BmsTag> impleme
             tagList.add(tag);
         }
         return tagList;
+    }
+
+    @Override
+    public Page<BmsPost> selectTopicsByTagId(Page<BmsPost> topicPage, String id) {
+        //获取关联的话题ID
+        Set<String> ids = IBmsTopicTagService.selectTopicIdsByTagId(id);
+        LambdaQueryWrapper<BmsPost> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(BmsPost::getId, ids);
+        return IBmsPostService.page(topicPage,wrapper);
     }
 }
