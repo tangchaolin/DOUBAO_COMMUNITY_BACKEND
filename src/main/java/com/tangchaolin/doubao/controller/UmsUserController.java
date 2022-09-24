@@ -1,10 +1,16 @@
 package com.tangchaolin.doubao.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tangchaolin.doubao.common.api.ApiResult;
 import com.tangchaolin.doubao.model.dto.LoginDTO;
 import com.tangchaolin.doubao.model.dto.RegisterDTO;
+import com.tangchaolin.doubao.model.entity.BmsPost;
 import com.tangchaolin.doubao.model.entity.UmsUser;
+import com.tangchaolin.doubao.service.IBmsPostService;
 import com.tangchaolin.doubao.service.IUmsUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +26,8 @@ import static com.tangchaolin.doubao.jwt.JwtUtil.USER_NAME;
 public class UmsUserController extends BaseController {
     @Resource
     private IUmsUserService iUmsUserService;
+    @Autowired
+    private IBmsPostService iBmsPostService;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ApiResult<Map<String, Object>> register(@Valid @RequestBody RegisterDTO dto) {
@@ -58,6 +66,19 @@ public class UmsUserController extends BaseController {
     }
 
 
+    @GetMapping("/{username}")
+    public ApiResult<Map<String, Object>> getUserByName(@PathVariable("username") String username,
+                                                        @RequestParam(value = "pageNo", defaultValue = "1") Integer pageNo,
+                                                        @RequestParam(value = "size", defaultValue = "10") Integer size) {
+        Map<String, Object> map = new HashMap<>(16);
+        UmsUser user = iUmsUserService.getUserByUsername(username);
+        Assert.notNull(user, "用户不存在");
+        Page<BmsPost> page = iBmsPostService.page(new Page<>(pageNo, size),
+                new LambdaQueryWrapper<BmsPost>().eq(BmsPost::getUserId, user.getId()));
+        map.put("user", user);
+        map.put("topics", page);
+        return ApiResult.success(map);
+    }
 
 }
 
