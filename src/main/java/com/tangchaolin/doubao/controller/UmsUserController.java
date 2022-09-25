@@ -80,6 +80,14 @@ public class UmsUserController extends BaseController {
         return ApiResult.success(map);
     }
 
+    @PostMapping("/update")
+    public ApiResult<UmsUser> updateUser(@RequestBody UmsUser user){
+
+        iUmsUserService.updateById(user);
+        return ApiResult.success(user);
+
+    }
+
 }
 
 

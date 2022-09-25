@@ -22,6 +22,7 @@ public class JwtAuthenticationFilter implements Filter {
     private boolean isProtectedUrl(HttpServletRequest request) {
         List<String> protectedPaths = new ArrayList<String>();
         protectedPaths.add("/ums/user/info");
+        protectedPaths.add("/ums/user/update");
         protectedPaths.add("/post/create");
         protectedPaths.add("/post/update");
         protectedPaths.add("/post/delete/*");
